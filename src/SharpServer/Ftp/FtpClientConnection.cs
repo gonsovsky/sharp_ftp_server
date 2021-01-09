@@ -703,7 +703,6 @@ namespace SharpServer.Ftp
             IPAddress localIp = ((IPEndPoint)ControlClient.Client.LocalEndPoint).Address;
 
             _passiveListener = PassiveListeners.GetListener(localIp);
-
             try
             {
                 _passiveListener.Start();
@@ -1241,6 +1240,9 @@ namespace SharpServer.Ftp
                 _log.Error(ex);
                 response = GetResponse(FtpResponses.TRANSFER_ABORTED);
             }
+
+
+            FtpPerformanceCounters.DecrementCurrentConnections();
 
             if (_dataClient != null)
             {
