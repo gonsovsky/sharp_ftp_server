@@ -1,23 +1,43 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Reflection;
+using System.Xml;
 using log4net;
 
 namespace SharpServer
 {
     class Program
     {
-        protected static ILog _log = LogManager.GetLogger(typeof(Program));
+        static void Logging()
+        {
+            if (File.Exists("log.txt"))
+                File.Delete("log.txt");
+            XmlDocument log4netConfig = new XmlDocument();
+            log4netConfig.Load(File.OpenRead("SharpServer.log4net"));
+
+            var repo = LogManager.CreateRepository(
+                Assembly.GetEntryAssembly(), typeof(log4net.Repository.Hierarchy.Hierarchy));
+
+            log4net.Config.XmlConfigurator.Configure(repo, log4netConfig["log4net"]);
+            _log = LogManager.GetLogger(typeof(Program));
+        }
+
+        protected static ILog _log;
 
         static void Main(string[] args)
         {
+            Logging();
+            FtpUserStore.Validate("rick", "test");
+
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-            using (SharpServer.Ftp.FtpServer s = new SharpServer.Ftp.FtpServer(new[] { new IPEndPoint(IPAddress.Any, 21), new IPEndPoint(IPAddress.IPv6Any, 21) }))
+            using (SharpServer.Ftp.FtpServer s = new SharpServer.Ftp.FtpServer(new[] { new IPEndPoint(IPAddress.Any, 1021) }))
             {
                 s.Start();
 
                 Console.WriteLine("Press any key to stop...");
-                Console.ReadKey(true);
+                Console.Read();
             }
 
             return;

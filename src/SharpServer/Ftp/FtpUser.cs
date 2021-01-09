@@ -42,6 +42,7 @@ namespace SharpServer
             }
             else
             {
+    
                 _users.Add(new FtpUser
                 {
                     UserName = "rick",
@@ -53,6 +54,19 @@ namespace SharpServer
                 {
                     serializer.Serialize(w, _users);
                 }
+            }
+
+            var isWindows = System.Environment.OSVersion.Platform.ToString().ToLower().Contains("win");
+
+            foreach (var user in _users)
+            {
+                if (!isWindows)
+                {
+                    user.HomeDir = "/ftp/ftp-user";
+                }
+
+                Console.WriteLine($@"{user.HomeDir}, {user.UserName}, {user.Password}");
+
             }
         }
 
@@ -68,6 +82,11 @@ namespace SharpServer
                     HomeDir = "C:\\Utils",
                     IsAnonymous = true
                 };
+                var isWindows = System.Environment.OSVersion.Platform.ToString().ToLower().Contains("win");
+                if (!isWindows)
+                {
+                    user.HomeDir = "/ftp/ftp-user";
+                }
             }
 
             return user;

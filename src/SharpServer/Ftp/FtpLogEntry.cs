@@ -22,7 +22,7 @@ namespace SharpServer.Ftp
         public override string ToString()
         {
             return string.Join(" ",
-                Date.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+                //Date.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
                 CIP,
                 CPort ?? "-",
                 CSUsername,

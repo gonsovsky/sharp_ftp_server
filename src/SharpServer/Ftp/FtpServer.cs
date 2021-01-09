@@ -44,7 +44,7 @@ namespace SharpServer.Ftp
         {
             _startTime = DateTime.Now;
 
-            _timer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+            _timer = new Timer(TimeSpan.FromSeconds(3).TotalMilliseconds);
 
             _timer.Elapsed += new ElapsedEventHandler(_timer_Elapsed);
 
@@ -70,6 +70,7 @@ namespace SharpServer.Ftp
         private void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             FtpPerformanceCounters.SetFtpServiceUptime(DateTime.Now - _startTime);
+          
         }
     }
 }

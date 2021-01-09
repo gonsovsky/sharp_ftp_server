@@ -473,6 +473,7 @@ namespace SharpServer.Ftp
 
         private string NormalizeFilename(string path)
         {
+            var oldpath = path;
             if (path == null)
             {
                 path = string.Empty;
@@ -489,12 +490,15 @@ namespace SharpServer.Ftp
             }
             else if (path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
             {
-                path = new FileInfo(Path.Combine(_root, path.Substring(1))).FullName;
+                if (path != _root)
+                    path = new FileInfo(Path.Combine(_root, path.Substring(1))).FullName;
             }
             else
             {
-                path = new FileInfo(Path.Combine(_currentDirectory, path)).FullName;
+                if (path != _root)
+                    path = new FileInfo(Path.Combine(_currentDirectory, path)).FullName;
             }
+            _log.Info($@"path: {oldpath} --> {path}");
 
             return IsPathValid(path) ? path : null;
         }
@@ -1318,6 +1322,7 @@ namespace SharpServer.Ftp
 
         private Response ListOperation(NetworkStream dataStream, string pathname)
         {
+            _log.Info($"List operation: {pathname}");
             DateTime now = DateTime.Now;
 
             StreamWriter dataWriter = new StreamWriter(dataStream, _currentEncoding);
@@ -1341,9 +1346,10 @@ namespace SharpServer.Ftp
             }
 
             IEnumerable<string> files = Directory.EnumerateFiles(pathname);
-
+            Console.WriteLine(string.Join(",",files));
             foreach (string file in files)
             {
+        
                 FileInfo f = new FileInfo(file);
 
                 string date = f.LastWriteTime < now.Subtract(TimeSpan.FromDays(180)) ?
